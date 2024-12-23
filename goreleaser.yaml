@@ -37,3 +37,7 @@ nfpms:
     release: 1
     section: default
     priority: extra
+dockers:
+  - image_templates:
+      - "ghcr.io/arran4/discord-dl:{{ .Tag }}"
+      - "ghcr.io/arran4/discord-dl:latest"
