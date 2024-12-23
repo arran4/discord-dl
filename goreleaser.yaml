@@ -1,4 +1,5 @@
-project_name: rntocase
+version: 2
+project_name: discord-dl
 builds:
   -
     binary: "discord-dl"
