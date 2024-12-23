@@ -8,6 +8,8 @@ builds:
       - CGO_ENABLED=1
     goarch:
       - amd64
+    goos:
+      - linux
 archives:
   -
     format_overrides:
