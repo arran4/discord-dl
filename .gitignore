@@ -8,3 +8,4 @@ bigbrother.*
 *.xcf
 /errors.log
 /discord-dl
+/outputs/
