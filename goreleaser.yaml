@@ -6,6 +6,8 @@ builds:
     dir: .
     env:
       - CGO_ENABLED=1
+    goarch:
+      - amd64
 archives:
   -
     format_overrides:
