@@ -51,7 +51,7 @@ It's safe to say that forums, the medium that has once acted as the internet's p
 
 - ## Flags: 
     - `--t=token` 
-        - Specify the token of your user agent.  Prepend `Bot ` to the token for bot tokens. 
+        - Specify the token of your user agent.  Prepend `Bot ` (case sensitive) to the token for bot tokens. 
         - eg: `--t='Bot <token>'` or `--t=<token>`
     - `--channel=channel_id`
         - Mode that archives the specified channel ID
