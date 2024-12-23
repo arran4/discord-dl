@@ -39,7 +39,7 @@ func (a Archiver) InsertGuildID(guild string) error {
 	return nil
 }
 
-//Index guild metadata: icon, name, banner
+// Index guild metadata: icon, name, banner
 func (a Archiver) IndexGuild(guild string) error {
 	g, err := a.Dg.Guild(guild)
 	if err != nil {
@@ -64,7 +64,7 @@ func (a Archiver) IndexGuild(guild string) error {
 	}
 
 	if g.ID != "" {
-		iconHash, err := common.DownloadFile(g.IconURL(), g.ID, a.Args.MediaLocation, true)
+		iconHash, err := common.DownloadFile(g.IconURL(""), g.ID, a.Args.MediaLocation, true)
 		if err != nil {
 			log.Error(err)
 		}
@@ -82,8 +82,8 @@ func (a Archiver) IndexGuild(guild string) error {
 		}
 	}
 	var bannerHash string
-	if g.BannerURL() != "" {
-		bannerHash, err = common.DownloadFile(g.BannerURL(), g.ID, a.Args.MediaLocation, true)
+	if g.BannerURL("") != "" {
+		bannerHash, err = common.DownloadFile(g.BannerURL(""), g.ID, a.Args.MediaLocation, true)
 		if err != nil {
 			log.Error(err)
 		}
@@ -104,7 +104,7 @@ func (a Archiver) IndexGuild(guild string) error {
 	return err
 }
 
-//Index channel metadata: topic, name, guild it belongs to, channel type
+// Index channel metadata: topic, name, guild it belongs to, channel type
 func (a Archiver) IndexChannel(channel string) error {
 	if a.Args.Output == "" {
 		return nil

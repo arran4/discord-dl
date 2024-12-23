@@ -6,3 +6,5 @@
 bigbrother.*
 /.vscode/*
 *.xcf
+/errors.log
+/discord-dl
