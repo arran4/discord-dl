@@ -1,0 +1,38 @@
+project_name: rntocase
+builds:
+  -
+    binary: "discord-dl"
+    dir: .
+    env:
+      - CGO_ENABLED=0
+archives:
+  -
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+nfpms:
+  -
+    vendor: de_inferno
+    homepage: https://github.com/Yakabuff/
+    maintainer: Yakabuff <yakabuff@fosstodon.org>
+    description: NA
+    license: Private
+    formats:
+      - apk
+      - deb
+      - rpm
+      - termux.deb
+      - archlinux
+    release: 1
+    section: default
+    priority: extra
