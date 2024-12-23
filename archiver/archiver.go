@@ -26,7 +26,7 @@ type Archiver struct {
 	Args  models.ArchiverArgs
 	Dg    *discordgo.Session
 	Web   web.Web
-	Queue job.JobQueue
+	Queue *job.JobQueue
 	Wg    sync.WaitGroup
 }
 
@@ -60,7 +60,7 @@ func (a Archiver) InitWeb() error {
 		}
 		log.Info("Starting webview...")
 
-		a.Web = web.NewWeb(a.Db, a.Args.DeployPort, a.Args.MediaLocation, &a.Queue, a.Args.Logging)
+		a.Web = web.NewWeb(a.Db, a.Args.DeployPort, a.Args.MediaLocation, a.Queue, a.Args.Logging)
 		a.Web.Deploy(a.Db)
 	}
 
@@ -99,7 +99,7 @@ func checkFlagMode(input string, guild string, channel string) models.Mode {
 	}
 }
 
-//Returns true if valid
+// Returns true if valid
 func ValidFlags(job models.JobArgs, archiver models.ArchiverArgs) bool {
 	if archiver.Export && archiver.Output != "" {
 		fmt.Fprintln(os.Stderr, "Cannot use --export and --output together")

@@ -45,7 +45,7 @@ type JobQueue struct {
 	*sync.Mutex
 	Queue    map[string]*Worker
 	MaxSize  int
-	Wg       *sync.WaitGroup
+	Wg       sync.WaitGroup
 	Archiver Archiver
 	Jobs     map[string]*Job
 	Progress *mpb.Progress
@@ -89,18 +89,17 @@ func NewJob(args models.JobArgs) Job {
 	return job
 }
 
-func NewJobQueue(a Archiver, logger bool) JobQueue {
+func NewJobQueue(a Archiver, logger bool) *JobQueue {
 	initLogger(logger)
 	m := sync.Mutex{}
 	q := make(map[string]*Worker)
 	jr := make(map[string]*Job)
-	w := &sync.WaitGroup{}
-	pg := mpb.New(mpb.WithWaitGroup(w))
-	return JobQueue{
+	pg := mpb.New(mpb.WithWaitGroup(&sync.WaitGroup{}))
+	return &JobQueue{
 		&m,
 		q,
 		60,
-		&sync.WaitGroup{},
+		sync.WaitGroup{},
 		a,
 		jr,
 		pg,
@@ -166,6 +165,7 @@ func (a *JobQueue) Enqueue(job Job) error {
 }
 
 func (a *JobQueue) StartWorker(w *Worker) {
+	defer a.Wg.Done()
 	for {
 		select {
 		case task := <-*w.Channel:
@@ -178,14 +178,12 @@ func (a *JobQueue) StartWorker(w *Worker) {
 		default:
 			log.Info("Last job processed in " + w.Category)
 			delete(a.Queue, w.Category)
-			a.Wg.Done()
 			return
 		}
 	}
 }
 
 func (a *JobQueue) ExecJobArgs(j models.JobArgs, job *Job) {
-
 	if j.Mode != models.NONE {
 		switch j.Mode {
 		case models.GUILD:
@@ -199,7 +197,6 @@ func (a *JobQueue) ExecJobArgs(j models.JobArgs, job *Job) {
 				job.Error = err
 				job.Status = ERROR
 				log.Error(err)
-				a.Wg.Done()
 				return
 			}
 
@@ -219,13 +216,13 @@ func (a *JobQueue) ExecJobArgs(j models.JobArgs, job *Job) {
 			} else {
 				job.Status = FINISHED
 			}
-			a.Wg.Done()
 
 		case models.CHANNEL:
 			//When processing a channel, first index channel, then download its messages
 			job.Status = RUNNING
 			bar := newBar(a.Progress, job.Snowflake, job.Id)
 			a.Wg.Add(1)
+			defer a.Wg.Done()
 			var state JobState = JobState{Progress: &job.Progress, Error: &job.Error, Status: &job.Status, Bar: bar, Id: job.Id}
 			err := a.Archiver.IndexChannel(j.Channel)
 			if err != nil {
@@ -234,7 +231,6 @@ func (a *JobQueue) ExecJobArgs(j models.JobArgs, job *Job) {
 				job.Status = ERROR
 
 				bar.Abort(false)
-				a.Wg.Done()
 				return
 			}
 
@@ -250,7 +246,6 @@ func (a *JobQueue) ExecJobArgs(j models.JobArgs, job *Job) {
 					job.Status = FINISHED
 				} else {
 					bar.Abort(false)
-					a.Wg.Done()
 					return
 				}
 			} else {
@@ -259,7 +254,6 @@ func (a *JobQueue) ExecJobArgs(j models.JobArgs, job *Job) {
 
 			bar.Completed()
 			state.Bar.Completed()
-			a.Wg.Done()
 		}
 	}
 }

@@ -65,7 +65,11 @@ func main() {
 
 	if jobArgs.Mode != models.NONE {
 		//Wait until job is complete and then exit
-		theArchiver.Queue.Enqueue(job.NewJob(jobArgs))
+		err := theArchiver.Queue.Enqueue(job.NewJob(jobArgs))
+		if err != nil {
+			log.Fatal("Error: " + err.Error())
+			return
+		}
 		theArchiver.Queue.Wg.Wait()
 		theArchiver.Queue.Progress.Wait()
 		log.Println("Job has finished")

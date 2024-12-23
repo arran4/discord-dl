@@ -5,7 +5,7 @@ import (
 	"github.com/yakabuff/discord-dl/common"
 )
 
-func (a Archiver) GetChannelsGuild(guildID string) ([]string, error) {
+func (a *Archiver) GetChannelsGuild(guildID string) ([]string, error) {
 
 	channels, err := a.Dg.GuildChannels(guildID)
 	if err != nil {
