@@ -5,7 +5,7 @@ builds:
     binary: "discord-dl"
     dir: .
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
 archives:
   -
     format_overrides:
